@@ -1,0 +1,14 @@
+
+*.pdf
+*.tex
+*.dta
+*.csv
+
+data/*
+!data/checklist.chk
+data/ne/*
+!data/ne/checklist.chk
+
+watch.py
+
+*.swp
