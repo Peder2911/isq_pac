@@ -1,7 +1,13 @@
-# =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  =  = 
+# ====================================================
 # Preparation and constants 
 #
 #
+
+# This script prepares data for visualization.
+# It is sourced by each script in the tablescripts / plotscripts folder
+# before plots / tables are created from the resulting data.
+
+# ====================================================
 
 shh <- suppressPackageStartupMessages
 shh(library(evallib))
@@ -18,6 +24,8 @@ shh(library(RSQLite))
 shh(library(tidyr))
 shh(library(grid))
 shh(library(forcats))
+
+# ====================================================
 
 source("functions.R")
 
@@ -67,7 +75,6 @@ occurrence <- occurrence %>%
 cinfo <- "SELECT countries.gwcode, name, regions.regionname FROM countries
           JOIN regions ON countries.isqregion = regions.isqregion" %>%
    getfrom(DB)
-
 # ================================================
 # Functions that prepare the prediction data for
 # further analysis.

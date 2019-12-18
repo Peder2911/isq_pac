@@ -6,14 +6,14 @@
 *.csv
 
 data/*
-!data/ne/checklist.chk
-!data/checklist.chk
-!*/*.sha1
-
 ne_50m_admin_0_countries_lakes*
+
+!data/ne/checklist.chk
+!data/*.md5
+!data/*.sha1
 
 watch.py
 
+depr/*
+
 *.swp
-
-
