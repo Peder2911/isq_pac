@@ -5,10 +5,12 @@
 *.csv
 
 data/*
-!data/checklist.chk
 data/ne/*
-!data/ne/checklist.chk
+!*/checklist.chk
+!*/*.sha1
 
 watch.py
 
 *.swp
+
+
