@@ -1,13 +1,16 @@
 
+
 *.pdf
 *.tex
 *.dta
 *.csv
 
 data/*
-data/ne/*
-!*/checklist.chk
+!data/ne/checklist.chk
+!data/checklist.chk
 !*/*.sha1
+
+ne_50m_admin_0_countries_lakes*
 
 watch.py
 
