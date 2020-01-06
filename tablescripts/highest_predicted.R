@@ -20,8 +20,8 @@ before09 <- occurrence %>%
 
 top50 <- data_t3 %>%
    filter(year == 2018) %>%
-   merge(latestConflicts, "gwcode") %>%
-   merge(before09, "gwcode") %>%
+   merge(latestConflicts, "gwcode",all.x = TRUE) %>%
+   merge(before09, "gwcode",all.x = TRUE) %>%
    mutate(`2018` = case_when(
       major_actual == 1 ~ "Major",
       minor_actual == 1 ~ "Minor",
