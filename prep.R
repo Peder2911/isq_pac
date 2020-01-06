@@ -24,6 +24,7 @@ shh(library(RSQLite))
 shh(library(tidyr))
 shh(library(grid))
 shh(library(forcats))
+shh(library(timelib))
 
 # ====================================================
 
@@ -59,6 +60,7 @@ occurrence <- "SELECT * FROM acd" %>%
 
 years <- do.call(seq,as.list(range(occurrence$year)))
 countries <- unique(predictions$gwcode)
+
 blank <- lapply(countries, function(cntry){
    data.frame(gwcode = cntry, year = years)
 }) %>%
@@ -70,6 +72,11 @@ occurrence[is.na(occurrence)] <- 0
 occurrence <- occurrence %>%
    group_by(gwcode) %>%
    onsetAndTerm(minor_actual, major_actual, either_actual) %>%
+   mutate(
+      onset_minor_actual = createOnset(minor_actual),
+      onset_major_actual = createOnset(major_actual),
+      onset_either_actual = createOnset(either_actual)
+   ) %>%
    ungroup()
 
 cinfo <- "SELECT countries.gwcode, name, regions.regionname FROM countries
@@ -100,7 +107,7 @@ addOccurrence <- function(predictions, occurrence, cinfo){
    res <- predictions %>%
       merge(occurrence, c("gwcode","year"), all.y = TRUE) %>%
       merge(cinfo,by="gwcode")
-   res[is.na(res)] <- 0
+   #res[is.na(res)] <- 0
    res
 }
 
@@ -122,7 +129,6 @@ predictions_2001_2009 <- prepPredictions(oos) %>% filter(
    year > 2000 & year < 2010)
 
 # Just some tests for peace-of-mind
-
 purrr::walk(list(predictions_2010_2018, predictions_2001_2009), function(dat){
    # Is each row a unique country-year?
    if(assertthat::are_equal(nrow(dat), 

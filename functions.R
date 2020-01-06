@@ -1,4 +1,14 @@
 
+#' createOnset
+#'
+#' Creates an onset variable 
+createOnset <- function(occurrence){
+   ons <- change(occurrence,1) 
+   ifelse(ons == 0 & occurrence == 1,
+      NA, 
+      ons)
+}
+
 #' getfrom
 #' 
 #' Just a context-function that grabs q from the db

@@ -22,12 +22,16 @@ summaryTable <- function(data){
 
    # Calculating recall and fallout
    posrates <- function(data,thresh){
-      preds <- as.numeric(data[[paste0("major_pred_",thresh)]] |
+      probs <- as.numeric(data[[paste0("major_pred_",thresh)]] |
                           data[[paste0("minor_pred_",thresh)]])
-      actual <- either(data, major_actual, minor_actual)
+      outcomes <- either(data, major_actual, minor_actual)
 
-      tpr = withConfmat(preds,actual,recall)
-      fpr = withConfmat(preds,actual,fallout)
+      complete <- !is.na(probs) & ! is.na(outcomes)
+      probs <- probs[complete]
+      outcomes <- outcomes[complete]
+
+      tpr = withConfmat(probs,outcomes,recall)
+      fpr = withConfmat(probs,outcomes,fallout)
 
       list(tpr = tpr,fpr = fpr)
    }
@@ -43,6 +47,11 @@ summaryTable <- function(data){
 
       probs <- data$combined
       outcomes <- as.numeric(data[[paste0(var,"either_actual")]])
+
+      complete <- !is.na(probs) & ! is.na(outcomes)
+      probs <- probs[complete]
+      outcomes <- outcomes[complete]
+
 
       list(auc = aucWithCI(probs, outcomes),
            auprc = auprc(probs, outcomes))
@@ -92,12 +101,12 @@ renderSummaryTable <- function(table){
 
 
 # These are rendered below:
-table <- mclapply(list(
+table <- lapply(list(
       predictions_2001_2009,
       filter(predictions_2001_2009, year %in% c(2007,2008,2009)),
       predictions_2010_2018,
       filter(predictions_2010_2018, year %in% c(2016,2017,2018))
-   ), summaryTable, mc.cores = detectCores()-1) %>%
+   ), summaryTable) %>%
    do.call(rbind, .)
 
 knitr::kable(table,"rst")

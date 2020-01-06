@@ -26,7 +26,12 @@ curves <- lapply(list(oos = predictions_2001_2009, neo = predictions_2010_2018),
 
       lapply(curvetypes , function(fn){
          data <- lapply(variables, function(var){
-            call <- c(list(dat$combined, dat[[paste0(var, "either_actual")]]))
+            probs <- dat$combined
+            outcomes <- dat[[paste0(var, "either_actual")]]
+            complete <- !is.na(probs) & !is.na(outcomes)
+            probs <- probs[complete]
+            outcomes <- outcomes[complete]
+            call <- list(probs,outcomes)
             c <- do.call(fn, call)
 
             #c <- metricCurve(dat$combined, dat[[paste0(var,"either_actual")]],
@@ -94,11 +99,6 @@ aucs <- sapply(curves, function(cohort){
 })
 
 message(aucs)
-#aucs <- sapply(list(list(curves[[1]]$roc$fallout,curves[[1]]$roc$recall),
-                    #list(curves[[2]]$roc$fallout,curves[[2]]$roc$recall),
-                    #list(curves[[1]]$pr$recall,curves[[1]]$pr$precision),
-                    #list(curves[[2]]$pr$recall,curves[[2]]$pr$precision)),
-               #function(args){do.call(auc,args)})
 
 aucs <- data.frame(Groups = c("01-09","10-18","01-09","10-18"),
                    AUC = abs(aucs))
