@@ -6,13 +6,16 @@ source("prep.R")
 data_t3 <- predictions_2010_2018 
 
 latestConflicts <- occurrence %>%
+   select(gwcode,year,either_actual) %>%
    group_by(gwcode) %>% 
+   filter(either_actual == 1) %>%
    summarize(latestyear = max(year))
 
 before09 <- occurrence %>%
-   select(gwcode,year) %>%
+   select(gwcode,year,either_actual) %>%
    filter(year < 2010) %>%
    group_by(gwcode) %>%
+   filter(either_actual == 1) %>%
    summarize(before09 = max(year))
 
 top50 <- data_t3 %>%
