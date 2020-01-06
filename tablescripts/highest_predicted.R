@@ -1,4 +1,6 @@
 
+library(UnidecodeR)
+
 source("prep.R")
 
 # ================================================
@@ -32,7 +34,8 @@ top50 <- data_t3 %>%
       `Before 2009` = ifelse(!is.na(before09),
                              as.character(before09),
                              " - ")) %>%
-   select(Country = name,
+   mutate(Country = unidecode(name,"all")) %>%
+   select(Country, 
           `Before 2018`,
           `Before 2009`,
           `2018`,
