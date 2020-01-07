@@ -79,10 +79,17 @@ fig5 <- ggplot(both,aes(x=year,y=val * 100,color=var, linetype = type)) +
    geom_vline(xintercept = 2018) +
    geom_vline(xintercept = 2009) +
    theme(
-      text = element_text(size = 20),
-      axis.text.x = element_text(angle = 45, hjust = 1, size = 18)
    ) +
    labs(x = "Year", y = "% In conflict", color = "", linetype = "") +
-   theme(legend.position = "bottom")
+   theme_classic() +
+   theme(
+      legend.position = "bottom",
+      panel.grid.major.y = element_line(size = 1, color = "lightgrey"),
+      text = element_text(size = 20),
+      panel.border = element_rect(fill = "transparent", size = 1),
+      axis.line = element_blank(), 
+      axis.ticks.length = unit(0.25,"cm"),
+      axis.text.x = element_text(angle = 45, hjust = 1, size = 18)
+      )
 ggsave(glue("{PLOTFOLDER}/timeline.{DEVICE}"),fig5,device = DEVICE,height = PLOTHEIGHT, width = PLOTWIDTH) 
 fig5
