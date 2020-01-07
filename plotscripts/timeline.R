@@ -55,6 +55,12 @@ both$var <- fct_recode(both$var,
                        Major = "inmajor",
                        Either = "inconflict")
 
+confint <- dbGetQuery(con,"SELECT * FROM confint") %>% 
+   pivot_longer(cols = c(ends_with("lower"),ends_with("upper")),"type","value") %>% 
+   separate("type",into = c("int","type"),sep = "_") %>% 
+   pivot_wider(names_from=c("type"),values_from=c("value")) %>%
+   mutate(int = str_to_title(int))
+
 dbDisconnect(con)
 
 ## @knitr figure_5_output
@@ -71,13 +77,14 @@ colors <- c(comb30 = "#800080",
             Minor = "#c8001f",
             minor30 = "#c8001f")
 
-fig5 <- ggplot(both,aes(x=year,y=val * 100,color=var, linetype = type)) + 
-   geom_line(size = 2) + 
+fig5 <- ggplot(both,aes(x=year)) + 
+   geom_ribbon(data=confint,aes(x=year,ymin=lower*100,ymax=upper*100,fill=int), alpha = 0.3, show.legend = FALSE) +
+   geom_line(size = 2,aes(linetype=type,color=var,y=val * 100)) + 
    scale_x_continuous(breaks = seq(1970,2050,5), 
                       limits = c(1970,2048), expand = c(0,0)) +
-   scale_color_manual(values = colors) + 
+   scale_discrete_manual(c("color","fill"),values = colors) + 
    geom_vline(xintercept = 2018) +
-   geom_vline(xintercept = 2009) +
+   geom_vline(xintercept = 2010) +
    theme(
    ) +
    labs(x = "Year", y = "% In conflict", color = "", linetype = "") +
@@ -91,5 +98,5 @@ fig5 <- ggplot(both,aes(x=year,y=val * 100,color=var, linetype = type)) +
       axis.ticks.length = unit(0.25,"cm"),
       axis.text.x = element_text(angle = 45, hjust = 1, size = 18)
       )
-ggsave(glue("{PLOTFOLDER}/timeline.{DEVICE}"),fig5,device = DEVICE,height = PLOTHEIGHT, width = PLOTWIDTH) 
+ggsave(glue("{PLOTFOLDER}/timeline.{DEVICE}"),fig5,device = DEVICE,height = 6, width = 12) 
 fig5
