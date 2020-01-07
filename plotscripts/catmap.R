@@ -51,18 +51,20 @@ dots <- data %>%
 
 map <- ggplot(data) +
    geom_sf(aes(geometry = geometry, fill = cat)) +
-   geom_sf(data = dots, aes(color = conflict), size = 5) +
+   geom_sf(data = dots, aes(color = conflict), size = 5, shape = 18) +
    scale_fill_manual(values = c(
-      "#d7191c",
-      "#fdae61",
-      "#abdda4",
-      "#2b83ba"
+      "#ed872d",
+      "#b7702d",
+      "#2b83ba",
+      "#7EB6FF"
    )) +
    scale_color_manual(values = c(
       "#ffff33",      
       "#ff3933",
       "#ffff33"      
-   ))
+   )) +
+   theme_classic()+
+   theme(text=element_text(size=18))
 
 size = 14
 ggsave(glue("{PLOTFOLDER}/catmap.pdf"),map,device = "pdf", height = 1 * size, width = 1.414 * size)
