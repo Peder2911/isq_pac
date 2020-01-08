@@ -1,11 +1,13 @@
 
 library(UnidecodeR)
+library(tictoc)
 
 source("prep.R")
 
 # ================================================
 
 data_t3 <- predictions_2010_2018 
+
 
 latestConflicts <- occurrence %>%
    select(gwcode,year,either_actual) %>%
@@ -20,7 +22,7 @@ before09 <- occurrence %>%
    filter(either_actual == 1) %>%
    summarize(before09 = max(year))
 
-top50 <- data_t3 %>%
+data_t3 <- data_t3 %>%
    filter(year == 2018) %>%
    merge(latestConflicts, "gwcode",all.x = TRUE) %>%
    merge(before09, "gwcode",all.x = TRUE) %>%
@@ -42,12 +44,27 @@ top50 <- data_t3 %>%
           Either = combined,
           Minor = minor_prob,
           Major = major_prob) %>%
-   arrange(-Either) %>%
-   head(50)
+   arrange(-Either) 
+
+saveRDS(data_t3,"/tmp/tee.rds")
+
+ilprob <- data_t3[data_t3$Country == "Israel","Either"]
+
+err <- data_t3 %>%
+   filter(Either < ilprob,
+      `2018` != "None")
+
+top45 <- head(data_t3, 45)
+
+top50 <- rbind(top45, err)
+
+
 
 latex_table <- kable(top50, "latex", booktabs = TRUE, digits = 4) %>%
    kable_styling(latex_options = c("hold_position"),
                  font_size = 7) %>%
+   pack_rows("Highest combined probability", 1, 45) %>% 
+   pack_rows("Notable prediction errors", 46, 48) %>% 
    add_header_above(c("","Latest observed" = 2,"Observed","Predicted 2018" = 3)) %>%
    stripTableEnvir()
 
