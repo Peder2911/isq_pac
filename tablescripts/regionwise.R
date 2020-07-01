@@ -26,7 +26,16 @@ get_region_results <- function(data){
 
       #res$q1 <- res$quantiles[1]
       #res$q2 <- res$quantiles[2]
-      res$quantiles <- NULL
+      res$quantiles <- NULL#
+
+      mc <- tryCatch(
+         metricCurve(
+            sub$combined,
+            as.numeric(sub$major_actual|sub$minor_actual),
+            recall,precision),
+         error = function(e){list(score=NA)})
+
+      res$auc <- abs(auc(mc$recall,mc$precision))
 
       #res$tpr_50 <- getMetric(sub,recall,"50") 
       #res$fpr_50 <- getMetric(sub,fallout,"50") 
@@ -47,12 +56,12 @@ results <- do.call(cbind, lapply(list(predictions_2001_2009,predictions_2010_201
    get_region_results))
 
 results <- cbind(regions,results)
-colnames(results) <- c("Region","2001-2009","2010-2018")
+colnames(results) <- c("Region","2001-2009","2010-2018","2001-2009","2010-2018")
 kable(results,"rst")
 
 str <- knitr::kable(results, "latex", 
                   booktabs = TRUE, digits = 3, linesep="") %>%
-   add_header_above(c("","AUROC" = 2)) 
+   add_header_above(c("","AUROC" = 2,"AUPRC"=2)) 
 str %>%
    stripTableEnvir() %>%
    writeLines(glue("{TABLEFOLDER}/regionwise.tex"))
