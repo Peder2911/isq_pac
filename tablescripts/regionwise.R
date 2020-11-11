@@ -8,6 +8,8 @@ data_t4 <- predictions_2010_2018
 
 
 get_region_results <- function(data){
+   yrs <- glue::glue("{min(data$year)}_{max(data$year)}")
+
    getMetric <- function(data,metric,thresh){
       # Get metric using a confusion matrix of predictions,
       # given thresh, and actual outcomes. 
@@ -20,6 +22,8 @@ get_region_results <- function(data){
    lapply(regions, function(region){
       # Build a list of results of several metrics
       sub <- data[data$regionname == region,]
+      sub <- sub[!is.na(sub$combined),]
+      write.csv(sub,glue::glue("/tmp/{yrs}_{region}.csv"))
       res <- tryCatch(aucWithCI(sub$combined, 
          as.numeric(sub$major_actual | sub$minor_actual)), 
          error = function(e){list(score = NA, quantiles = c(NA,NA))})
@@ -52,16 +56,22 @@ get_region_results <- function(data){
 options(knitr.kable.NA = " - ")
 
 regions <- unique(predictions_2010_2018$region)
+regions[regions=="Western Asia and North Africa"] <- "Middle East and North Africa"
+
 results <- do.call(cbind, lapply(list(predictions_2001_2009,predictions_2010_2018),
    get_region_results))
 
+
 results <- cbind(regions,results)
-colnames(results) <- c("Region","2001-2009","2010-2018","2001-2009","2010-2018")
+colnames(results) <- c("Region","AUROC","AUPRC","AUROC","AUPRC")
+
+results[c(1,3),c(4,5)] <- NA
+
 kable(results,"rst")
 
 str <- knitr::kable(results, "latex", 
                   booktabs = TRUE, digits = 3, linesep="") %>%
-   add_header_above(c("","AUROC" = 2,"AUPRC"=2)) 
+   add_header_above(c("","2001-2009" = 2,"2010-2018"=2)) 
 str %>%
    stripTableEnvir() %>%
    writeLines(glue("{TABLEFOLDER}/regionwise.tex"))

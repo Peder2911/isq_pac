@@ -13,7 +13,17 @@ ne_50m_admin_0_countries_lakes*
 !data/*.sha1
 
 watch.py
+*.swp
 
 depr/*
 
-*.swp
+venv/
+
+maps/*
+plots/*
+tables/*
+
+!maps/.keep
+!tables/.keep
+!plots/.keep
+cache/*

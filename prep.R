@@ -129,14 +129,14 @@ predictions_2001_2009 <- prepPredictions(oos) %>% filter(
    year > 2000 & year < 2010)
 
 # Just some tests for peace-of-mind
-purrr::walk(list(predictions_2010_2018, predictions_2001_2009), function(dat){
+#purrr::walk(list(predictions_2010_2018, predictions_2001_2009), function(dat){
    # Is each row a unique country-year?
-   if(assertthat::are_equal(nrow(dat), 
-      length(unique(dat$gwcode)) * length(unique(dat$year)))){
-      cat("Each row is a unique country-year\n")
-   } else {
-      stop("Failed assertion: Each row is not a unique country-year!")
-   }
-})
+#   if(assertthat::are_equal(nrow(dat), 
+#      length(unique(dat$gwcode)) * length(unique(dat$year)))){
+#      cat("Each row is a unique country-year\n")
+#   } else {
+#      stop("Failed assertion: Each row is not a unique country-year!")
+#   }
+#})
 
 cat("The data are ready!!\n")
