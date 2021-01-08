@@ -27,3 +27,4 @@ tables/*
 !tables/.keep
 !plots/.keep
 cache/*
+*.zip
