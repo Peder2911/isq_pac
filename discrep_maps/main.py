@@ -144,7 +144,7 @@ def main(conflictType = "either"):
         norm=norm,legend_kwds={'label': "Mean prediction discrepancy 2010-2018", 
             'orientation': "horizontal"})
 
-    plt.savefig(f"maps/{conflictType}_mean.png")
+    plt.savefig(f"maps/{conflictType}_mean.eps")
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
